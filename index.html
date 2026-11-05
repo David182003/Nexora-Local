@@ -1,0 +1,77 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="theme-color" content="#f6f7fb">
+  <title>System Cochera | Gestión de alquileres</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800&family=Manrope:wght@500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<div id="login" class="login-shell">
+  <form id="authForm" class="login-card">
+    <div class="brand-mark">SC</div><p class="eyebrow">ADMINISTRACIÓN DE ALQUILERES</p>
+    <h1>System <span>Cochera</span></h1><p class="muted">Controla clientes, pagos y saldos pendientes desde un solo lugar.</p>
+    <label>Correo electrónico<input id="email" type="email" placeholder="tu@correo.com" required></label>
+    <label>Contraseña<input id="password" type="password" placeholder="Mínimo 6 caracteres" required minlength="6"></label>
+    <button class="btn btn-primary full" id="authButton">Ingresar</button>
+    <button type="button" class="text-button" id="toggleAuth">¿No tienes cuenta? Crear cuenta</button>
+    <p id="authError" class="error"></p>
+  </form>
+</div>
+
+<div id="app" class="app-shell hidden">
+  <aside class="sidebar">
+    <div class="brand"><div class="brand-mark">SC</div><div><b>System Cochera</b><small>GESTIÓN DE ALQUILERES</small></div></div>
+    <p class="side-label">MENÚ PRINCIPAL</p>
+    <button data-page="dashboard" class="nav active"><span>▦</span> Resumen</button>
+    <button data-page="clients" class="nav"><span>♙</span> Clientes</button>
+    <button data-page="history" class="nav"><span>↗</span> Historial de pagos</button>
+    <div class="sidebar-bottom"><div class="secure-note"><span>●</span><div><b>Cuenta protegida</b><small>Datos privados de tu negocio</small></div></div><button id="logout" class="logout">↪ Cerrar sesión</button></div>
+  </aside>
+
+  <main class="main-content">
+    <header class="topbar"><div><p class="eyebrow">PANEL DE CONTROL</p><h2 id="heading">Resumen general</h2><p class="muted" id="todayLabel"></p></div><button class="btn btn-primary" id="newClient">＋ Registrar cliente</button></header>
+
+    <section id="dashboard">
+      <div class="welcome-banner"><div><p class="eyebrow">TU NEGOCIO, BAJO CONTROL</p><h1>Resumen de alquileres</h1><p>Consulta cuánto has cobrado y cuánto falta por cobrar.</p></div><div class="banner-icon">▤</div></div>
+      <div class="stats-grid">
+        <article class="stat-card"><div class="stat-top"><span class="stat-icon blue">♙</span><span class="stat-caption">CLIENTES ACTIVOS</span></div><strong id="sClients">0</strong><small>Alquileres registrados</small></article>
+        <article class="stat-card"><div class="stat-top"><span class="stat-icon green">↗</span><span class="stat-caption">COBRADO ESTE MES</span></div><strong id="sIncome">S/ 0.00</strong><small>Pagos recibidos en el mes</small></article>
+        <article class="stat-card debt-stat"><div class="stat-top"><span class="stat-icon red">!</span><span class="stat-caption">DEUDA TOTAL</span></div><strong id="sDebt">S/ 0.00</strong><small id="sDebtDays">0 días vencidos pendientes</small></article>
+        <article class="stat-card"><div class="stat-top"><span class="stat-icon violet">✓</span><span class="stat-caption">DÍAS PAGADOS ESTE MES</span></div><strong id="sPaid">0</strong><small>Días cubiertos por pagos</small></article>
+      </div>
+      <div class="section-heading"><div><h3>Estado de cuenta por cliente</h3><p>La deuda se calcula con los días vencidos que todavía no están pagados.</p></div><button class="text-button" data-goto="clients">Ver todos →</button></div>
+      <div id="debtList" class="debt-list"></div>
+    </section>
+
+    <section id="clients" class="hidden">
+      <div class="section-heading client-tools"><div><h3>Todos los clientes</h3><p>Tarifa diaria, días pendientes y saldo por cobrar.</p></div><input id="search" class="search-input" placeholder="Buscar cliente o vehículo..."></div>
+      <div id="clientList" class="client-grid"></div>
+    </section>
+
+    <section id="detail" class="hidden"><button id="back" class="back-link">← Volver a clientes</button><div id="detailContent"></div></section>
+    <section id="history" class="hidden"><div class="section-heading"><div><h3>Historial de pagos</h3><p>Todos los cobros y adelantos registrados.</p></div></div><div id="historyList" class="history-list"></div></section>
+  </main>
+</div>
+
+<dialog id="clientModal" class="modal"><form id="clientForm"><div class="modal-heading"><div><p class="eyebrow">NUEVO REGISTRO</p><h2>Registrar cliente</h2></div><button type="button" class="modal-x" data-close="clientModal">×</button></div>
+  <label>Nombre del cliente<input id="name" required placeholder="Ej. Juan Pérez"></label>
+  <label>Vehículo / descripción<input id="vehicle" required placeholder="Ej. Carrito de crepas"></label>
+  <div class="form-row"><label>Precio diario (S/)<input id="rate" type="number" min="0.01" step="0.01" required placeholder="4.00"></label><label>Inicio del alquiler<input id="start" type="date" required></label></div>
+  <label>Fecha de finalización <span class="muted">(opcional)</span><input id="endDate" type="date"><small class="muted">Si no se conoce la fecha de salida, déjala vacía.</small></label>
+  <label>Notas (opcional)<input id="notes" placeholder="Referencia u observaciones"></label>
+  <div class="modal-actions"><button type="button" class="btn btn-light" data-close="clientModal">Cancelar</button><button class="btn btn-primary">Guardar cliente</button></div><p id="clientError" class="error"></p>
+</form></dialog>
+
+<dialog id="payModal" class="modal"><form id="payForm"><div class="modal-heading"><div><p class="eyebrow">REGISTRO DE COBRO</p><h2>Confirmar pago</h2></div><button type="button" class="modal-x" data-close="payModal">×</button></div>
+  <p id="payClient" class="muted"></p><div class="payment-total"><div><small>DÍAS SELECCIONADOS</small><b id="payDays">0 días</b></div><strong id="payAmount">S/ 0.00</strong></div>
+  <label>Fecha de recepción<input id="received" type="date" required></label><label>Medio de pago<select id="method"><option>Efectivo</option><option>Yape</option><option>Plin</option><option>Transferencia</option><option>Otro</option></select></label>
+  <label>Observación<input id="payNote" placeholder="Ej. Adelanto de varios días"></label>
+  <div class="modal-actions"><button type="button" class="btn btn-light" data-close="payModal">Cancelar</button><button class="btn btn-primary">Confirmar pago</button></div><p id="payError" class="error"></p>
+</form></dialog>
+<div id="toast" role="status"></div>
+<script type="module" src="app.js"></script>
+</body></html>
